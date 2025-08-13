@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import CourseCard from './CourseCard'
-import { AddContext } from '../../../src/context/AddContext'  // Adjust path as needed
+import { AddContext } from '../../../src/context/AddContext'  // Adjust path if needed
 
 const CoursesSection = () => {
   const { allCourses } = useContext(AddContext);
@@ -13,9 +13,10 @@ const CoursesSection = () => {
         Discover our top-rated courses across various categories. From coding and design to <br />business and wellness, our courses are crafted to deliver results.
       </p>
 
-      <div className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] px-4 md:px-0 md:my-16 my-10 gap-4">
+      {/* Updated Grid Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-4 md:px-0 md:my-16 my-10 gap-4">
         {allCourses.slice(0, 4).map((course, index) => (
-          <CourseCard key={index} course={course} />
+          <CourseCard key={course._id || index} course={course} />
         ))}
       </div>
 

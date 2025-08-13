@@ -10,7 +10,7 @@ const SearchBar = ({data}) => {
         navigate('/course-list/'+input);
     }
   return (
-    <div className="flex justify-center w-full pt-8 pb-4 px-4">
+    <div className="flex justify-center w-full ">
       <form
         className="flex items-center w-full max-w-xl rounded-lg border border-gray-300 bg-white/70
                    focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500

@@ -3,19 +3,30 @@ import { assets, dummyTestimonial } from '../../assets/assets'
 
 const TestimonialsSection = () => {
   return (
-    <div className="pb-14 px-8 md:px-0">
-      <h2 className="text-3xl font-bold text-gray-900 text-center mb-1">Testimonials</h2>
+    <div className="pb-14 px-4 sm:px-8 md:px-12">
+      <h2 className="text-3xl font-bold text-gray-900 text-center mb-1">
+        Testimonials
+      </h2>
       <p className="md:text-base text-gray-500 mt-2 text-center max-w-xl mx-auto mb-8">
         Hear from our learners as they share their journeys of transformation, success, and how our platform has made a difference in their lives.
       </p>
 
-      <div className="grid grid-cols-1  mx-50 md:grid-cols-2 lg:grid-cols-3 gap-7 mt-10">
+      <div
+        className="
+          grid gap-8 
+          max-[450px]:block
+          sm:grid-cols-2
+          lg:grid-cols-3
+          justify-items-center
+        "
+      >
         {dummyTestimonial.map((testimonial, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl border border-gray-200 shadow-[0_3px_24px_0px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl border border-gray-200 shadow-[0_3px_24px_0px_rgba(0,0,0,0.06)]
+                       overflow-hidden flex flex-col max-w-[320px] w-full"
           >
-            {/* Top section - grey bg with name/avatar */}
+            {/* Top section */}
             <div className="flex items-center gap-4 px-6 py-5 bg-gray-100">
               <img
                 className="h-12 w-12 rounded-full object-cover border border-gray-300"
