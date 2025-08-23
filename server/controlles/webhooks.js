@@ -1,7 +1,7 @@
 import { Webhook } from "svix";
 import User from "../modules/User.js";
 
-export const clerkWebhooks = async (req, res) => {
+ const clerkWebhooks = async (req, res) => {
   try {
     // 1. Verify webhook
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
@@ -64,3 +64,5 @@ export const clerkWebhooks = async (req, res) => {
     res.status(400).send("Invalid webhook");
   }
 };
+
+export default clerkWebhooks;
