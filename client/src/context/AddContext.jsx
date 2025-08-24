@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import { dummyCourses } from "../assets/assets";
 import humanizeDuration from "humanize-duration"; // make sure you have this installed
 
@@ -6,6 +7,7 @@ export const AddContext = createContext();
 
 export const AppContextProvider = (props) => {
   const currency = import.meta.env.VITE_CURRENCY;
+  const { userId, isSignedIn } = useAuth();
 
   const [allCourses, setAllCourses] = useState([]);
   const [isEducator, setIsEducator] = useState(true);
@@ -67,14 +69,31 @@ export const AppContextProvider = (props) => {
 
   // Fetch user enrolled courses
   const fetchUserEnrolledCourses = async () => {
-    setEnrolledCourses(dummyCourses);
+    if (!userId || !isSignedIn) {
+      setEnrolledCourses([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/users/${userId}/enrolled-courses`);
+      if (response.ok) {
+        const courses = await response.json();
+        setEnrolledCourses(courses);
+      } else {
+        console.error("Failed to fetch enrolled courses");
+        setEnrolledCourses(dummyCourses);
+      }
+    } catch (error) {
+      console.error("Error fetching enrolled courses:", error);
+      setEnrolledCourses(dummyCourses);
+    }
   };
 
   // Load all courses and enrolled courses on mount
   useEffect(() => {
     fetchAllCourses();
-    fetchUserEnrolledCourses(); // ✅ Now enrolledCourses gets data immediately
-  }, []);
+    fetchUserEnrolledCourses();
+  }, [userId, isSignedIn]);
 
   const value = {
     currency,

@@ -1,26 +1,27 @@
 import express from "express";
 import cors from "cors";
-import "dotenv/config";   // ✅ silent dotenv
+import "dotenv/config";
 import connectDB from "./configs/mongodb.js";
-import clerkWebhooks from './controlles/webhooks.js'
+import clerkWebhooks from "./controlles/webhooks.js";
+import userRoutes from "./routers/user.js";
 
 const app = express();
 
-// ✅ connect DB first, then start server
 const startServer = async () => {
   try {
     await connectDB();
 
+    // Clerk webhook needs raw body
+    app.use("/clerk", express.json({ type: "*/*" }), clerkWebhooks);
+
     app.use(express.json());
     app.use(cors());
 
-    //Routes
     app.get("/", (req, res) => {
       res.send("<h1>This is Base Router</h1>");
     });
 
-    app.post('/clerk' , clerkWebhooks)
-
+    app.use("/users", userRoutes);
 
    //Port Declaration
     const PORT = process.env.PORT || 5000;
