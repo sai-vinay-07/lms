@@ -1,29 +1,33 @@
 import { createContext, useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { dummyCourses } from "../assets/assets";
-import humanizeDuration from "humanize-duration"; // make sure you have this installed
+import humanizeDuration from "humanize-duration"; 
+import { nanoid } from "nanoid"; // ✅ browser-safe replacement
 
 export const AddContext = createContext();
 
 export const AppContextProvider = (props) => {
-  const currency = import.meta.env.VITE_CURRENCY;
+  const currency = import.meta.env.VITE_CURRENCY || "₹";
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000"; // ✅ env-driven API base
+
   const { userId, isSignedIn } = useAuth();
 
   const [allCourses, setAllCourses] = useState([]);
   const [isEducator, setIsEducator] = useState(true);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  // Fetch all courses
+  // ✅ Fetch all courses
   const fetchAllCourses = async () => {
+    // TODO: Replace dummyCourses with API call if backend is ready
     setAllCourses(dummyCourses);
   };
 
-  // Check if a course is enrolled
+  // ✅ Check if a course is enrolled
   const isEnrolled = (courseId) => {
     return enrolledCourses.some((course) => course._id === courseId);
   };
 
-  // Calculate average rating for a course
+  // ✅ Calculate average rating
   const calculateRating = (course) => {
     if (!course?.courseRatings?.length) return 0;
     let totalRating = course.courseRatings.reduce(
@@ -33,7 +37,7 @@ export const AppContextProvider = (props) => {
     return totalRating / course.courseRatings.length;
   };
 
-  // Calculate total time for a single chapter
+  // ✅ Calculate total time for a single chapter
   const calculateChapterTime = (chapter) => {
     if (!chapter?.chapterContent?.length) return "0m";
     let time = chapter.chapterContent.reduce(
@@ -43,7 +47,7 @@ export const AppContextProvider = (props) => {
     return humanizeDuration(time * 60 * 1000, { units: ["h", "m"], round: true });
   };
 
-  // Calculate total course duration
+  // ✅ Calculate total course duration
   const calculateCourseDuration = (course) => {
     if (!course?.courseContent?.length) return "0m";
     let time = course.courseContent.reduce((sum, chapter) => {
@@ -58,7 +62,7 @@ export const AppContextProvider = (props) => {
     return humanizeDuration(time * 60 * 1000, { units: ["h", "m"], round: true });
   };
 
-  // Calculate total number of lectures in a course
+  // ✅ Calculate number of lectures in a course
   const calculateNoofLectures = (course) => {
     if (!course?.courseContent?.length) return 0;
     return course.courseContent.reduce(
@@ -67,7 +71,7 @@ export const AppContextProvider = (props) => {
     );
   };
 
-  // Fetch user enrolled courses
+  // ✅ Fetch user enrolled courses
   const fetchUserEnrolledCourses = async () => {
     if (!userId || !isSignedIn) {
       setEnrolledCourses([]);
@@ -75,21 +79,21 @@ export const AppContextProvider = (props) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${userId}/enrolled-courses`);
+      const response = await fetch(`${apiUrl}/api/users/${userId}/enrolled-courses`);
       if (response.ok) {
         const courses = await response.json();
         setEnrolledCourses(courses);
       } else {
-        console.error("Failed to fetch enrolled courses");
-        setEnrolledCourses(dummyCourses);
+        console.error("❌ Failed to fetch enrolled courses");
+        setEnrolledCourses(dummyCourses); // fallback
       }
     } catch (error) {
-      console.error("Error fetching enrolled courses:", error);
-      setEnrolledCourses(dummyCourses);
+      console.error("❌ Error fetching enrolled courses:", error);
+      setEnrolledCourses(dummyCourses); // fallback
     }
   };
 
-  // Load all courses and enrolled courses on mount
+  // ✅ Load courses on mount and when auth changes
   useEffect(() => {
     fetchAllCourses();
     fetchUserEnrolledCourses();
@@ -106,7 +110,8 @@ export const AppContextProvider = (props) => {
     calculateNoofLectures,
     enrolledCourses,
     fetchUserEnrolledCourses,
-    isEnrolled, // ✅ added to context
+    isEnrolled,
+    generateId: nanoid, // ✅ safe unique id generator
   };
 
   return (
